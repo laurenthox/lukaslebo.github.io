@@ -19,27 +19,14 @@ Paddle.prototype.draw = function() {
 }
 
 Paddle.prototype.move = function() {
-    that = this;
-    document.addEventListener('keydown',function(e){
-        if(e.keyCode == 65 || e.keyCode == 37){
-            that.goLeft = true;
-        }
-        else if (e.keyCode == 68 || e.keyCode == 39) {
-            that.goRight = true;
-        }
-    });
-    document.addEventListener('keyup',function(e){
-        if(e.keyCode == 65 || e.keyCode == 37){
-            that.goLeft = false;
-        }
-        else if (e.keyCode == 68 || e.keyCode == 39) {
-            that.goRight = false;
-        }
-    });
     if (this.goLeft && this.paddleX > 0) {
         this.paddleX -= this.paddleVel;
     }
     else if (this.goRight && this.paddleX+this.paddleWidth < this.width) {
         this.paddleX += this.paddleVel;
     }
+}
+
+Paddle.prototype.reset = function() {
+    this.paddleX = this.width/2-this.paddleWidth/2;
 }
