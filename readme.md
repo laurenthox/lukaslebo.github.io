@@ -1,6 +1,6 @@
 # JS-Fundamentals - Day 5: Assignment
 
-First solo day of the bootcamp!!
+First solo day of the bootcamp!
 
 We know how much desire you have to start with the assignment but first, let's have a TEST!!! I'm kidding, actually I'm not. But don't worry you will not have a grade.
 
