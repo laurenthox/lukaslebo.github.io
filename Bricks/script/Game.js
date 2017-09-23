@@ -238,10 +238,10 @@ Game.prototype.setup = function() {
     });
     document.addEventListener('keydown',function(e){
         if(e.keyCode == 65 || e.keyCode == 37){
-            that.paddle.goLeft = true;
+            that.paddle.goLeft = true; that.paddle.goRight = false;
         }
         else if (e.keyCode == 68 || e.keyCode == 39) {
-            that.paddle.goRight = true;
+            that.paddle.goRight = true; that.paddle.goLeft = false;
         }
     });
     document.addEventListener('keyup',function(e){
