@@ -1,5 +1,5 @@
 
-# Bricks
+# [Bricks](https://lukaslebo.github.io/Bricks)
 
 ## Implementation by Lukas Lebovitz (23.09.2017)
 
