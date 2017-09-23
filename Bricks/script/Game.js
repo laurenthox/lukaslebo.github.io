@@ -123,6 +123,7 @@ Game.prototype.resetHard = function() {
     this.isWin = false;
     this.lifes = 5;
     this.score = 0;
+    this.ballOnFire = 0;
     this.bricks = [];
     this.powerups = [];
     this.paddle.reset();
@@ -178,20 +179,24 @@ Game.prototype.collisionCheck = function() {
         if (this.bricks[i].isHit == false) {
             var check = this.bricks[i].check(this.ball.ballX, this.ball.ballY, this.ball.ballR, this.ball.velX, this.ball.velY, this.ballOnFire);
             if (check[0] == true) {
-                if (check[1])
-                this.score++;
+                if (check[1]) {
+                    this.score++;
+                }
                 if (this.ballOnFire>0) {
                     return;
                 } 
                 if (check.length==4) {
+                    console.log('corner hit');
                     this.ball.velY = -this.ball.velY;
                     this.ball.velX = -this.ball.velX;
                 }
-                else if (check[2]=='up' || check[1]=='down') {
+                else if (check[2]=='up' || check[2]=='down') {
                     this.ball.velY = -this.ball.velY;
+                    console.log('up/down');
                 }
-                else if (check[2]=='left' || check[1]=='right') {
+                else if (check[2]=='left' || check[2]=='right') {
                     this.ball.velX = -this.ball.velX;
+                    console.log('right/left');
                 }
                 if (this.score == this.win){
                     this.stopAction = true;

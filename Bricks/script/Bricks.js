@@ -28,7 +28,7 @@ Brick.prototype.check = function(bX, bY, bR, velX, velY,ballOnFire) {
         bX+bR > x && bX-bR < x+w &&
         bY+bR > y && bY-bR < y+h 
     ) {
-        arr = [true];
+        var arr = [true];
         this.lifes--;
         if (ballOnFire>0) {
             this.lifes = 0;
@@ -41,10 +41,15 @@ Brick.prototype.check = function(bX, bY, bR, velX, velY,ballOnFire) {
             arr.push(false);
         }
         var up = false, down = false, left = false, right = false;
-        if (bY+bR>y && bY+bR<y+h && velY>0) {up = true;}
-        if (bY-bR<y+h && bY-bR>y && velY<0) {down = true;}
-        if (bX+bR>x && bX+bR<x+w && velX>0) {left = true;}
-        if (bX-bR<x+w && bX-bR>x && velX<0) {right = true;}
+        var dx = (velX>0)? x-(bX-bR):(bX+bR)-(x+w);
+        var dy = (velY>0)? y-(bY-bR):(bY+bR)-(y+h);
+
+        if (velY>0 && dy>dx) {up = true;}
+        else if (velY<0 && dy>dx) {down = true;}
+        else if (velX>0 && dx>dy) {left = true;}
+        else if (velX<0 && dx>dy) {right = true;}
+        else if (dx==dy) {down = true; left = true;}
+
         if (up) {arr.push('up');}
         if (down) {arr.push('down');}
         if (left) {arr.push('left');}

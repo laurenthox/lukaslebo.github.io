@@ -14,8 +14,6 @@ function Ball() {
 }
 
 Ball.prototype.draw = function(n) {
-    var test = Math.sqrt(this.velX*this.velX+this.velY*this.velY);
-    console.log(test);
     this.ctx.beginPath();
     this.ctx.fillStyle = 'white';
     if (n>0) {
@@ -34,11 +32,10 @@ Ball.prototype.reset = function() {
 }
 
 Ball.prototype.launch = function() {
-    this.velX = 0;
-    while (Math.abs(this.velX) < this.MaxVel*0.1) {
+    do {
         this.velX = Math.random()*2*this.MaxVel-this.MaxVel;
-    }
-    this.velY = -Math.sqrt(this.MaxVel*this.MaxVel-this.velY*this.velY);
+    } while (Math.abs(this.velX) > this.MaxVel*0.5) 
+    this.velY = -Math.sqrt((this.MaxVel*this.MaxVel)-(this.velX*this.velX));
 }
 
 Ball.prototype.move = function() {
