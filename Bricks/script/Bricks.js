@@ -28,17 +28,20 @@ Brick.prototype.check = function(bX, bY, bR, velX, velY,ballOnFire) {
         bX+bR > x && bX-bR < x+w &&
         bY+bR > y && bY-bR < y+h 
     ) {
-        var arr = [true];
+        var arr = [true]; // arr: brick collision true
         this.lifes--;
         if (ballOnFire>0) {
             this.lifes = 0;
+            this.isHit = true;
+            arr.push(true); // brick killed true
+            return arr;
         }
         if (this.lifes == 0) {
             this.isHit = true;
-            arr.push(true);
+            arr.push(true); // brick killed true
         }
         else {
-            arr.push(false);
+            arr.push(false); // brick killed false
         }
         var up = false, down = false, left = false, right = false;
         var dx = (velX>0)? x-(bX-bR):(bX+bR)-(x+w);
@@ -54,7 +57,7 @@ Brick.prototype.check = function(bX, bY, bR, velX, velY,ballOnFire) {
         if (down) {arr.push('down');}
         if (left) {arr.push('left');}
         if (right) {arr.push('right');}
-        return arr;
+        return arr; // where to reflect
     }
-    return [false];
+    return [false]; // no brick collision
 }
