@@ -1,6 +1,9 @@
 
+function closure() {
+    let game = new Game();
+    game.runGame();
+}
 
-var game = new Game();
+var myClosure = new closure();
 
-game.runGame();
 

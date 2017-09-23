@@ -104,9 +104,9 @@ Game.prototype.runGame = function() {
         this.brickPatternSimple();
         this.isInitialized = true;
     }
-
+    that = this;
     setInterval(function(){
-        game.gameTasks();
+        that.gameTasks();
     }, 17)
 }
 
