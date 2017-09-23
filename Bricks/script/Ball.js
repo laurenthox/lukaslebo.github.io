@@ -7,8 +7,6 @@ function Ball() {
     this.ballX = this.width/2;
     this.ballY = this.height-20;
     this.MaxVel = 5;
-    // this.MaxVelHard = 7;
-    // this.velIncrement = 0.35;
     this.velX = 0;
     this.velY = 0;
 }
@@ -24,7 +22,6 @@ Ball.prototype.draw = function(n) {
 }
 
 Ball.prototype.reset = function() {
-    // this.MaxVel = this.MaxVelHard;
     this.ballX = this.width/2;
     this.ballY = this.height-20;
     this.velX = 0;
@@ -38,6 +35,11 @@ Ball.prototype.launch = function() {
     this.velY = -Math.sqrt((this.MaxVel*this.MaxVel)-(this.velX*this.velX));
 }
 
+Ball.prototype.launchRNG = function() {
+    this.velX = Math.random()*2*this.MaxVel-this.MaxVel;
+    this.velY = Math.sqrt((this.MaxVel*this.MaxVel)-(this.velX*this.velX))*((Math.random()<0.5)? -1:1);
+}
+
 Ball.prototype.move = function() {
     this.ballX += this.velX;
     this.ballY += this.velY;
@@ -45,7 +47,6 @@ Ball.prototype.move = function() {
 
 // Reflects Ball at Paddle. Takes paddleX and paddleWidth
 Ball.prototype.paddleReflection = function(pX,pW) {
-    // this.MaxVel += this.velIncrement;
     var maxFrac = 0.9;
     var influence = 0.5; // between 0 and 1
     var frac = ((this.ballX-pX)/pW*2-1);

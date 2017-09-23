@@ -4,7 +4,7 @@ function Game() {
     this.width = this.ctx.canvas.clientWidth;
     this.height = this.ctx.canvas.clientHeight;
     this.paddle = new Paddle();
-    this.ball = new Ball();
+    this.ball = [new Ball()];
     this.bricks = [];
     this.powerups = [];
     this.isInitialized = false;
@@ -68,7 +68,7 @@ Game.prototype.drawToScreen = function() {
     this.bricks.forEach(el => el.draw());
     if (!this.stopAction) {
         this.paddle.draw();
-        this.ball.draw(this.ballOnFire);
+        this.ball.forEach(el => el.draw(this.ballOnFire));
         this.powerups.forEach(el => el.draw());
     }
     this.drawLifes();
@@ -90,8 +90,8 @@ Game.prototype.gameTasks = function() {
     if (!this.pause && !this.stopAction) {
         this.collisionCheck();
         this.paddle.move();
-        if (this.stickBall) {this.ball.ballX = this.paddle.paddleX+this.paddle.paddleWidth/2;}
-        this.ball.move();
+        if (this.stickBall) {this.ball[0].ballX = this.paddle.paddleX+this.paddle.paddleWidth/2;}
+        this.ball.forEach(el => el.move());
         this.powerups.forEach(el => el.move());
     }
     this.drawToScreen();
@@ -100,7 +100,6 @@ Game.prototype.gameTasks = function() {
 Game.prototype.runGame = function() {
     if (!this.isInitialized) {
         this.setup();
-        // this.brickPatternEasy();
         this.brickPatternSimple();
         this.isInitialized = true;
     }
@@ -111,15 +110,16 @@ Game.prototype.runGame = function() {
 }
 
 Game.prototype.resetSoft = function() {
-    this.ball.reset();
+    this.ball = [new Ball()];
+    this.ball.forEach(el => el.reset());
     this.stickBall = true;
 }
 
 Game.prototype.resetHard = function() {
+    this.resetSoft();
     this.stopAction = false;
     this.isGameOver = false;
     this.pause = false;
-    this.stickBall = true;
     this.printHint = true;
     this.isWin = false;
     this.lifes = 5;
@@ -128,92 +128,115 @@ Game.prototype.resetHard = function() {
     this.bricks = [];
     this.powerups = [];
     this.paddle.reset();
-    this.ball.reset();
     this.brickPatternSimple();
 }
 
 Game.prototype.collisionCheck = function() {
-    // ball hits paddle
-    if (
-        this.ball.ballX > this.paddle.paddleX && 
-        this.ball.ballX < this.paddle.paddleX+this.paddle.paddleWidth && 
-        this.ball.ballY+this.ball.ballR > this.height-this.paddle.offset-this.paddle.paddleThickness
-    ) {
-        this.ball.paddleReflection(this.paddle.paddleX,this.paddle.paddleWidth);
-    }
-
-    // ball hits box boundary
-    if (this.ball.ballX-this.ball.ballR < 0 || this.ball.ballX+this.ball.ballR > this.width) {
-        this.ball.velX = -this.ball.velX;
-    }
-    if (this.ball.ballY-this.ball.ballR < 0) {
-        this.ball.velY = -this.ball.velY;
-    }
-
-    // ball is lost at bottom (Player loses a life)
-    if (this.ball.ballY+this.ball.ballR > this.height) {
-        this.lifes--;
-        // also remove powerup
-        this.ballOnFire = 0;
-        if (this.lifes == 0) {
-            this.isGameOver = true;
-            this.stopAction = true;
-            return;
+    var ballsToSplice = [];
+    for (var i = 0; i < this.ball.length; i++) {
+        // ball hits paddle
+        if (
+            this.ball[i].ballX > this.paddle.paddleX && 
+            this.ball[i].ballX < this.paddle.paddleX+this.paddle.paddleWidth && 
+            this.ball[i].ballY+this.ball[i].ballR > this.height-this.paddle.offset-this.paddle.paddleThickness
+        ) {
+            this.ball[i].paddleReflection(this.paddle.paddleX,this.paddle.paddleWidth);
         }
-        this.resetSoft();
+    
+        // ball hits box boundary
+        if (this.ball[i].ballX-this.ball[i].ballR < 0 || this.ball[i].ballX+this.ball[i].ballR > this.width) {
+            this.ball[i].velX = -this.ball[i].velX;
+        }
+        if (this.ball[i].ballY-this.ball[i].ballR < 0) {
+            this.ball[i].velY = -this.ball[i].velY;
+        }
+    
+        // ball is lost at bottom (Player loses a life)
+        if (this.ball[i].ballY+this.ball[i].ballR > this.height) {
+            if (this.ball.length == 1) {
+                this.lifes--;
+                // also remove powerup
+                this.ballOnFire = 0;
+                if (this.lifes == 0) {
+                    this.isGameOver = true;
+                    this.stopAction = true;
+                    return;
+                }
+                this.resetSoft();
+            }
+            else {
+                ballsToSplice.push(i);
+            }
+        }
+    
+        // check for collision between bricks and ball
+        for (var j = 0; j < this.bricks.length; j++) {
+            if (this.bricks[j].isHit == false) {
+                var check = this.bricks[j].check(this.ball[i].ballX, this.ball[i].ballY, this.ball[i].ballR, this.ball[i].velX, this.ball[i].velY, this.ballOnFire);
+                if (check[0] == true) {
+                    if (check[1]) {
+                        this.score++;
+                    }
+                    if (this.ballOnFire>0) {
+                        return;
+                    } 
+                    if (check.length==4) {
+                        console.log('corner hit');
+                        this.ball[i].velY = -this.ball[i].velY;
+                        this.ball[i].velX = -this.ball[i].velX;
+                    }
+                    else if (check[2]=='up' || check[2]=='down') {
+                        this.ball[i].velY = -this.ball[i].velY;
+                        console.log('up/down');
+                    }
+                    else if (check[2]=='left' || check[2]=='right') {
+                        this.ball[i].velX = -this.ball[i].velX;
+                        console.log('right/left');
+                    }
+                    if (this.score == this.win){
+                        this.stopAction = true;
+                        this.isWin = true;
+                    }
+                    if (Math.random()<this.dropChance) {
+                        this.dropChance = 0;
+                        this.powerups.push(new PowerUp(this.bricks[j].posX+this.bricks[j].brickW,this.bricks[j].posY+this.bricks[j].brickH));
+                    }
+                    else {
+                        this.dropChance += 0.02;
+                    }
+                }
+            }
+        }
+    }
+    // Delete any balls that have been missed
+    for (var i = 0; i < ballsToSplice.length; i++) {
+        this.ball.splice(ballsToSplice[i],1);
+        ballsToSplice = ballsToSplice.map(el => --el);
     }
 
     // check if powerups are collected
     for (var i = 0; i < this.powerups.length; i++) {
         var check = this.powerups[i].check(this.paddle.paddleX, this.paddle.paddleY, this.paddle.paddleWidth, this.paddle.paddleThickness, this.paddle.offset);
         if (check == true) {
-            this.ballOnFire = 20*60; // 20 seconds
+            if (this.powerups[i].type == 0) {
+                this.ballOnFire = 20*60; // 20 seconds
+            }
+            else if (this.powerups[i].type == 1) {
+                for (var j = 0; j < 5; j++) {
+                    this.ball.push(new Ball());
+                    var newBall = this.ball[this.ball.length-1];
+                    var oldestBall = this.ball[0];
+                    newBall.ballX = oldestBall.ballX;
+                    newBall.ballY = oldestBall.ballY;
+                    newBall.launchRNG();
+                }
+            }
         }
     }
     // wear out powerup
     if (this.ballOnFire>0) {
         --this.ballOnFire;
     }
-
-    // check for collision between bricks and ball
-    for (var i = 0; i < this.bricks.length; i++) {
-        if (this.bricks[i].isHit == false) {
-            var check = this.bricks[i].check(this.ball.ballX, this.ball.ballY, this.ball.ballR, this.ball.velX, this.ball.velY, this.ballOnFire);
-            if (check[0] == true) {
-                if (check[1]) {
-                    this.score++;
-                }
-                if (this.ballOnFire>0) {
-                    return;
-                } 
-                if (check.length==4) {
-                    console.log('corner hit');
-                    this.ball.velY = -this.ball.velY;
-                    this.ball.velX = -this.ball.velX;
-                }
-                else if (check[2]=='up' || check[2]=='down') {
-                    this.ball.velY = -this.ball.velY;
-                    console.log('up/down');
-                }
-                else if (check[2]=='left' || check[2]=='right') {
-                    this.ball.velX = -this.ball.velX;
-                    console.log('right/left');
-                }
-                if (this.score == this.win){
-                    this.stopAction = true;
-                    this.isWin = true;
-                }
-                if (Math.random()<this.dropChance) {
-                    this.dropChance = 0;
-                    this.powerups.push(new PowerUp(this.bricks[i].posX+this.bricks[i].brickW,this.bricks[i].posY+this.bricks[i].brickH));
-                }
-                else {
-                    this.dropChance += 0.02;
-                }
-            }
-        }
-    }
-
 }
 
 Game.prototype.setup = function() {
@@ -226,7 +249,7 @@ Game.prototype.setup = function() {
             if (that.stickBall) {
                 that.printHint = false;
                 that.stickBall = false;
-                that.ball.launch();
+                that.ball[0].launch();
             }
             else {
                 that.pause = !(that.pause);
