@@ -1,9 +1,7 @@
 
 # Bricks
 
-
-# Implementation by Lukas Lebovitz (23.09.2017)
-
+## Implementation by Lukas Lebovitz (23.09.2017)
 
 game build in canvas. features: 
 
