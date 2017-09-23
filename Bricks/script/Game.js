@@ -11,6 +11,7 @@ function Game() {
     this.pause = false;
     this.lifes = 5;
     this.score = 0;
+    this.dropChance = 0;
     this.win = -1;
     this.stickBall = true;
     this.printHint = true;
@@ -202,8 +203,12 @@ Game.prototype.collisionCheck = function() {
                     this.stopAction = true;
                     this.isWin = true;
                 }
-                if (Math.random()>0.8) {
+                if (Math.random()<this.dropChance) {
+                    this.dropChance = 0;
                     this.powerups.push(new PowerUp(this.bricks[i].posX+this.bricks[i].brickW,this.bricks[i].posY+this.bricks[i].brickH));
+                }
+                else {
+                    this.dropChance += 0.02;
                 }
             }
         }
