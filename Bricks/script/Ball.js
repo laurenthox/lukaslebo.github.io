@@ -13,9 +13,14 @@ function Ball() {
     this.velY = 0;
 }
 
-Ball.prototype.draw = function() {
+Ball.prototype.draw = function(n) {
+    var test = Math.sqrt(this.velX*this.velX+this.velY*this.velY);
+    console.log(test);
     this.ctx.beginPath();
     this.ctx.fillStyle = 'white';
+    if (n>0) {
+        this.ctx.fillStyle = 'red';
+    }
     this.ctx.arc(this.ballX,this.ballY,this.ballR,0,Math.PI*2);
     this.ctx.fill();
 }
@@ -24,15 +29,16 @@ Ball.prototype.reset = function() {
     // this.MaxVel = this.MaxVelHard;
     this.ballX = this.width/2;
     this.ballY = this.height-20;
+    this.velX = 0;
     this.velY = 0;
-    this.launch();
 }
 
 Ball.prototype.launch = function() {
-    while (Math.abs(this.velY) < this.MaxVel*0.1) {
-        this.velY = -Math.random()*this.MaxVel;
+    this.velX = 0;
+    while (Math.abs(this.velX) < this.MaxVel*0.1) {
+        this.velX = Math.random()*2*this.MaxVel-this.MaxVel;
     }
-    this.velX = Math.sqrt((this.MaxVel * this.MaxVel) - (this.velY * this.velY))*((Math.random()-0.5<0)? -1:1);
+    this.velY = -Math.sqrt(this.MaxVel*this.MaxVel-this.velY*this.velY);
 }
 
 Ball.prototype.move = function() {
