@@ -107,7 +107,7 @@ Game.prototype.runGame = function() {
     that = this;
     setInterval(function(){
         that.gameTasks();
-    }, 17)
+    }, 17);
 }
 
 Game.prototype.resetSoft = function() {
@@ -156,6 +156,12 @@ Game.prototype.collisionCheck = function() {
         {
             this.sound.wallhit();
             this.ball[i].velX = -this.ball[i].velX;
+            if (this.ball[i].ballX < this.width/2) {
+                this.ball[i].ballX = this.ball[i].ballR;
+            }
+            else {
+                this.ball[i].ballX = this.width-this.ball[i].ballR;
+            }
         }
         if (this.ball[i].ballY-this.ball[i].ballR < 0) {
             this.sound.wallhit();
@@ -214,13 +220,7 @@ Game.prototype.collisionCheck = function() {
                     else if (check[2]=='left' || check[2]=='right') {
                         this.ball[i].velX = -this.ball[i].velX;
                     }
-                    if (this.score == this.win){
-                        this.stopAction = true;
-                        this.isWin = true;
-                        this.sound.stopMusic();
-                        this.sound.win();
-                    }
-                    if (Math.random()<this.dropChance) {
+                    if (Math.random()<this.dropChance && check[1]) {
                         this.dropChance = 0;
                         this.powerups.push(new PowerUp(this.bricks[j].posX+this.bricks[j].brickW,this.bricks[j].posY+this.bricks[j].brickH));
                     }

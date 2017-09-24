@@ -50,13 +50,13 @@ Brick.prototype.check = function(bX, bY, bR, velX, velY,ballOnFire) {
         bY+bR > y && bY-bR < y+h 
     ) {
         var arr = [true]; // arr: brick collision true
-        this.lifes--;
         if (ballOnFire>0) {
             this.lifes = 0;
             this.isHit = true;
             arr.push(true); // brick killed true
             return arr;
         }
+        this.lifes--;
         if (this.lifes == 0) {
             this.isHit = true;
             arr.push(true); // brick killed true
