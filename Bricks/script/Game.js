@@ -270,7 +270,8 @@ Game.prototype.setup = function() {
     console.log('Setting up event listeners...');
     that = this;
     document.addEventListener('keypress',function(e) {
-        if (e.keyCode == 32) {
+        console.log(e); // <================ ---------------
+        if (e.keyCode == 32 || e.key == " ") {
             e.preventDefault();
             if (that.stickBall) {
                 that.printHint = false;
@@ -281,23 +282,23 @@ Game.prototype.setup = function() {
                 that.pause = !(that.pause);
             }
         }
-        else if (e.keyCode == 82 || e.keyCode == 114) {
+        else if (e.keyCode == 82 || e.keyCode == 114 || e.key == "r") {
             that.resetHard();
         }
     });
     document.addEventListener('keydown',function(e){
-        if(e.keyCode == 65 || e.keyCode == 37){
+        if(e.keyCode == 65 || e.keyCode == 37 || e.key == "a" || e.key == "ArrowLeft"){
             that.paddle.goLeft = true; that.paddle.goRight = false;
         }
-        else if (e.keyCode == 68 || e.keyCode == 39) {
+        else if (e.keyCode == 68 || e.keyCode == 39 || e.key == "d" || e.key == "ArrowRight") {
             that.paddle.goRight = true; that.paddle.goLeft = false;
         }
     });
     document.addEventListener('keyup',function(e){
-        if(e.keyCode == 65 || e.keyCode == 37){
+        if(e.keyCode == 65 || e.keyCode == 37 || e.key == "a" || e.key == "ArrowLeft"){
             that.paddle.goLeft = false;
         }
-        else if (e.keyCode == 68 || e.keyCode == 39) {
+        else if (e.keyCode == 68 || e.keyCode == 39|| e.key == "d" || e.key == "ArrowRight") {
             that.paddle.goRight = false;
         }
     });

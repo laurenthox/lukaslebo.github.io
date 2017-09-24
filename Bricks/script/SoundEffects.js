@@ -86,7 +86,7 @@ SoundEffects.prototype.setup = function() {
     }, false);
     // pause / mute music with 'm'
     document.addEventListener('keypress', function(e) {
-        if(e.keyCode == 109 || e.keyCode == 77) {
+        if(e.keyCode == 109 || e.keyCode == 77 || e.key == "m") {
             if (!myMusic.isMuted) {
                 myMusic.music.pause();
                 myMusic.isMuted = !myMusic.isMuted;
