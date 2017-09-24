@@ -19,6 +19,7 @@ function Game() {
     this.isGameOver = false;
     this.isWin = false;
     this.ballOnFire = 0;
+    this.sound = new SoundEffects();
 }
 
 Game.prototype.drawBackground = function() {
@@ -129,6 +130,10 @@ Game.prototype.resetHard = function() {
     this.powerups = [];
     this.paddle.reset();
     this.brickPatternSimple();
+    if (this.sound.restart) {
+        this.sound.playMusic();
+        this.sound.restart = false;
+    }
 }
 
 Game.prototype.collisionCheck = function() {
@@ -140,14 +145,21 @@ Game.prototype.collisionCheck = function() {
             this.ball[i].ballX < this.paddle.paddleX+this.paddle.paddleWidth && 
             this.ball[i].ballY+this.ball[i].ballR > this.height-this.paddle.offset-this.paddle.paddleThickness
         ) {
+            this.sound.wallhit();
             this.ball[i].paddleReflection(this.paddle.paddleX,this.paddle.paddleWidth);
         }
     
         // ball hits box boundary
-        if (this.ball[i].ballX-this.ball[i].ballR < 0 || this.ball[i].ballX+this.ball[i].ballR > this.width) {
+        if (
+            this.ball[i].ballX-this.ball[i].ballR < 0 || 
+            this.ball[i].ballX+this.ball[i].ballR > this.width) 
+        {
+            this.sound.wallhit();
             this.ball[i].velX = -this.ball[i].velX;
         }
         if (this.ball[i].ballY-this.ball[i].ballR < 0) {
+            this.sound.wallhit();
+            this.ball[i].ballY = this.ball[i].ballR; // fixes rare bug
             this.ball[i].velY = -this.ball[i].velY;
         }
     
@@ -158,10 +170,13 @@ Game.prototype.collisionCheck = function() {
                 // also remove powerup
                 this.ballOnFire = 0;
                 if (this.lifes == 0) {
+                    this.sound.stopMusic();
+                    this.sound.gameover();
                     this.isGameOver = true;
                     this.stopAction = true;
                     return;
                 }
+                this.sound.lost();
                 this.resetSoft();
             }
             else {
@@ -178,24 +193,25 @@ Game.prototype.collisionCheck = function() {
                         this.score++;
                     }
                     if (this.ballOnFire>0) {
+                        this.sound.firehit();
                         return;
-                    } 
+                    }
+                    this.sound.hit();
                     if (check.length==4) {
-                        console.log('corner hit');
                         this.ball[i].velY = -this.ball[i].velY;
                         this.ball[i].velX = -this.ball[i].velX;
                     }
                     else if (check[2]=='up' || check[2]=='down') {
                         this.ball[i].velY = -this.ball[i].velY;
-                        console.log('up/down');
                     }
                     else if (check[2]=='left' || check[2]=='right') {
                         this.ball[i].velX = -this.ball[i].velX;
-                        console.log('right/left');
                     }
                     if (this.score == this.win){
                         this.stopAction = true;
                         this.isWin = true;
+                        this.sound.stopMusic();
+                        this.sound.win();
                     }
                     if (Math.random()<this.dropChance) {
                         this.dropChance = 0;
@@ -218,6 +234,7 @@ Game.prototype.collisionCheck = function() {
     for (var i = 0; i < this.powerups.length; i++) {
         var check = this.powerups[i].check(this.paddle.paddleX, this.paddle.paddleY, this.paddle.paddleWidth, this.paddle.paddleThickness, this.paddle.offset);
         if (check == true) {
+            this.sound.pickUp();
             if (this.powerups[i].type == 0) {
                 this.ballOnFire = 20*60; // 20 seconds
             }
@@ -275,6 +292,8 @@ Game.prototype.setup = function() {
             that.paddle.goRight = false;
         }
     });
+    // Start music
+    this.sound.playMusic();
 }
 
 Game.prototype.brickPatternSimple = function() {
