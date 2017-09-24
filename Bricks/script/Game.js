@@ -270,7 +270,6 @@ Game.prototype.setup = function() {
     console.log('Setting up event listeners...');
     that = this;
     document.addEventListener('keypress',function(e) {
-        console.log(e); // <================ ---------------
         if (e.keyCode == 32 || e.key == " ") {
             e.preventDefault();
             if (that.stickBall) {
