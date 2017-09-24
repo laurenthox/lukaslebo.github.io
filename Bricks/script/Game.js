@@ -152,10 +152,11 @@ Game.prototype.collisionCheck = function() {
         // ball hits box boundary
         if (
             this.ball[i].ballX-this.ball[i].ballR < 0 || 
-            this.ball[i].ballX+this.ball[i].ballR > this.width) 
-        {
+            this.ball[i].ballX+this.ball[i].ballR > this.width
+        ) {
             this.sound.wallhit();
             this.ball[i].velX = -this.ball[i].velX;
+            // fix issue when ball is stack in wall
             if (this.ball[i].ballX < this.width/2) {
                 this.ball[i].ballX = this.ball[i].ballR;
             }
@@ -165,8 +166,9 @@ Game.prototype.collisionCheck = function() {
         }
         if (this.ball[i].ballY-this.ball[i].ballR < 0) {
             this.sound.wallhit();
-            this.ball[i].ballY = this.ball[i].ballR; // fixes rare bug
             this.ball[i].velY = -this.ball[i].velY;
+            // fix when wall is stuck in wall
+            this.ball[i].ballY = this.ball[i].ballR; 
         }
     
         // ball is lost at bottom (Player loses a life)
