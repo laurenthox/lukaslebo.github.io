@@ -192,6 +192,13 @@ Game.prototype.collisionCheck = function() {
                     if (check[1]) {
                         this.score++;
                     }
+                    if (this.score == this.win){
+                        this.stopAction = true;
+                        this.isWin = true;
+                        this.sound.stopMusic();
+                        this.sound.win();
+                        return;
+                    }
                     if (this.ballOnFire>0) {
                         this.sound.firehit();
                         return;

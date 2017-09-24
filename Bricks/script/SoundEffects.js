@@ -5,7 +5,7 @@ function SoundEffects() {
     this.powerUp = new Audio('music/powerUpCollected.wav');
     this.hitSound2 = new Audio('music/firehit.wav');
     this.hitSound3 = new Audio('music/hitWall.mp3');
-    this.success = new Audio('music/success.wav');
+    this.success = new Audio('music/success.mp3');
     this.gameoverTheme = new Audio('music/gameover.mp3');
     this.effectVolume = 0.2;
     this.musicVolume = 1;
@@ -16,7 +16,7 @@ function SoundEffects() {
 
 SoundEffects.prototype.win = function() {
     if (this.isMuted) {return;}
-    this.success.volume = this.effectVolume;
+    this.success.volume = this.musicVolume;
     this.success.currentTime = 0;
     this.success.play();
 }
@@ -68,6 +68,7 @@ SoundEffects.prototype.playMusic = function() {
     this.gameoverTheme.pause();
     this.gameoverTheme.currentTime = 0;
     this.music.play();
+    this.music.volume = this.musicVolume;
 }
 
 SoundEffects.prototype.stopMusic = function() {
@@ -81,7 +82,7 @@ SoundEffects.prototype.setup = function() {
     // loop music
     this.music.addEventListener('ended', function() {
         myMusic.currentTime = 0;
-        myMusic.play();
+        myMusic.music.play();
     }, false);
     // pause / mute music with 'm'
     document.addEventListener('keypress', function(e) {
